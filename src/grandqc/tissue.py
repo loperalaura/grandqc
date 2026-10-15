@@ -3,7 +3,7 @@ import numpy as np
 import torch
 from PIL import Image
 import segmentation_models_pytorch as smp
-from wsi_tis_detect_helper_fx import to_tensor_x, get_preprocessing, make_class_map
+from grandqc.wsi_tis_detect_helper_fx import to_tensor_x, get_preprocessing, make_class_map
 import argparse
 import zarr
 from skimage.io import imread

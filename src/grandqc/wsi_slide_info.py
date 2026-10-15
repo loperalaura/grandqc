@@ -1,7 +1,7 @@
 # EXTRACTION OF META-DATA FROM SLIDE
 
 from PIL import Image
-from wsi_stain_norm import standardizer
+from grandqc.wsi_stain_norm import standardizer
 import numpy as np
 
 

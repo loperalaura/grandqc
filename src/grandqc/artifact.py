@@ -3,13 +3,13 @@ Comments to version:
 - Uses tissue maps from tissue detector. Therefore, slides should be processed by tissue detector firstly.
 - Consider adding color schema if you use the tool for a new entity
 """
-from wsi_colors import colors_QC7 as colors
+from grandqc.wsi_colors import colors_QC7 as colors
 import torch
 from PIL import Image
 import os
-from wsi_slide_info import slide_info
-from wsi_process import slide_process_single, mask_to_geojson
-from wsi_maps import make_overlay
+from grandqc.wsi_slide_info import slide_info
+from grandqc.wsi_process import slide_process_single, mask_to_geojson
+from grandqc.wsi_maps import make_overlay
 import numpy as np
 import timeit
 import cv2
