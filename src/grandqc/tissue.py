@@ -179,7 +179,7 @@ def main():
             overlay.save(os.path.join(tis_det_dir_over, slide_name + '_OVERLAY.jpg'))
             slide_tiff.close()
         except Exception as e:
-            print('Problem with a file:', slide_name)
+            print('Problem with a file:', slide_name, '-', repr(e))
 
 
 if __name__ == "__main__":
