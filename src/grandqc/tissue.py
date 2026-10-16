@@ -75,7 +75,7 @@ def main():
     preprocessing_fn = smp.encoders.get_preprocessing_fn(ENCODER_MODEL_TD, ENCODER_MODEL_TD_WEIGHTS)
     model = smp.UnetPlusPlus(
         encoder_name=ENCODER_MODEL_TD,
-        encoder_weights=ENCODER_MODEL_TD_WEIGHTS,
+        encoder_weights=None,
         classes=2,
         activation=None,
     )
