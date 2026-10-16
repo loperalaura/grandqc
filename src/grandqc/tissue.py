@@ -42,6 +42,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', dest='device', default=None, type=str,
                         help="'cuda', 'mps' or 'cpu' (default: auto-detect)")    
+    parser.add_argument('--model_path', dest='model_path', default=None, type=str,
+                        help='path to Tissue_Detection_MPP10.pth (default: ./models/td/Tissue_Detection_MPP10.pth)')
     parser.add_argument('--slide_folder', dest='slide_folder', help='path to WSIs', type=str)
     parser.add_argument('--output_dir', dest='output_dir', help='path to output folder', type=str)
     parser.add_argument('--mpp', dest='mpp', help='mpp of the slide', default=0.2425, type=float)
@@ -77,7 +79,8 @@ def main():
         classes=2,
         activation=None,
     )
-    model.load_state_dict(torch.load(os.path.join(MODEL_TD_DIR, MODEL_TD_NAME), map_location='cpu'))
+    model_path = args.model_path or os.path.join(MODEL_TD_DIR, MODEL_TD_NAME)
+    model.load_state_dict(torch.load(model_path, map_location='cpu'))
     model.to(DEVICE)
     model.eval()
 
