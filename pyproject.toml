@@ -7,7 +7,8 @@ name = "grandqc"
 dynamic = ["version"]
 description = "Tissue detection and artifact segmentation for whole-slide images (OME-TIFF)"
 readme = "README.md"
-license = { file = "LICENSE" }
+license = "CC-BY-NC-SA-4.0"
+license-files = ["LICENSE"]
 requires-python = ">=3.10"
 authors = [
     { name = "Zhilong Weng" },
@@ -18,6 +19,7 @@ dependencies = [
     "torch>=2.0,<2.6",
     "segmentation-models-pytorch==0.3.1",
     "timm==0.4.12",
+    "six",
     # Image reading (OME-TIFF via scikit-image/tifffile + zarr)
     "scikit-image",
     "tifffile",
