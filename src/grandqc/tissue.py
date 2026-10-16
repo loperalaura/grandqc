@@ -117,6 +117,17 @@ def main():
             image = cv2.imdecode(image, 1)
             image = Image.fromarray(image)
 
+            # Pad images smaller than one model patch (e.g. narrow tissue sections)
+            # with white background; the mask is cropped back to the original size below.
+            image_unpadded = image
+            orig_w, orig_h = image.size
+            pad_w, pad_h = max(orig_w, M_P_S_MODEL_TD), max(orig_h, M_P_S_MODEL_TD)
+            if (pad_w, pad_h) != (orig_w, orig_h):
+                print(f'Image smaller than one patch ({orig_w}x{orig_h}); padding to {pad_w}x{pad_h}')
+                padded = Image.new('RGB', (pad_w, pad_h), (255, 255, 255))
+                padded.paste(image, (0, 0))
+                image = padded
+
             width, height = image.size
 
             wi_n = width // M_P_S_MODEL_TD
@@ -172,9 +183,13 @@ def main():
                     end_image = np.concatenate((end_image, temp_image), axis=0)
                     end_image_class_map = np.concatenate((end_image_class_map, temp_image_class_map), axis=0)
 
+               # Crop away padding (no-op for images >= one patch)
+            end_image = end_image[:orig_h, :orig_w]
+            end_image_class_map = end_image_class_map[:orig_h, :orig_w]
+
             Image.fromarray(end_image).save(os.path.join(tis_det_dir_mask, slide_name + '_MASK.png'))
             Image.fromarray(end_image_class_map).save(os.path.join(tis_det_dir_mask_col, slide_name + '_MASK_COL.png'))
-            overlay = cv2.addWeighted(np.array(image), OVER_IMAGE, end_image_class_map, OVER_MASK, 0)
+            overlay = cv2.addWeighted(np.array(image_unpadded), OVER_IMAGE, end_image_class_map, OVER_MASK, 0)
             overlay = Image.fromarray(overlay)
             overlay.save(os.path.join(tis_det_dir_over, slide_name + '_OVERLAY.jpg'))
             slide_tiff.close()
