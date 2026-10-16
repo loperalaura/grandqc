@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grandqc"
+dynamic = ["version"]
+description = "Tissue detection and artifact segmentation for whole-slide images (OME-TIFF)"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+authors = [
+    { name = "Zhilong Weng" },
+    { name = "Yuri Tolkach" },
+]
+dependencies = [
+    # Model stack: exact versions needed to load the pickled GrandQC checkpoints (see issue #10)
+    "torch>=2.0,<2.6",
+    "segmentation-models-pytorch==0.3.1",
+    "timm==0.4.12",
+    # Image reading (OME-TIFF via scikit-image/tifffile + zarr)
+    "scikit-image",
+    "tifffile",
+    "imagecodecs",
+    "zarr<3",
+    # Image processing and utilities
+    "numpy<2",
+    "opencv-python-headless",
+    "pillow",
+    "tqdm",
+]
+
+[project.urls]
+Homepage = "https://github.com/cpath-ukk/grandqc"
+Publication = "https://doi.org/10.1038/s41467-024-54769-y"
+
+[project.scripts]
+grandqc-tissue = "grandqc.tissue:main"
+grandqc-artifact = "grandqc.artifact:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.dynamic]
+version = { attr = "grandqc.__version__" }
