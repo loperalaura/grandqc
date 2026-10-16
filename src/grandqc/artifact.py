@@ -158,6 +158,7 @@ def main():
                                                         int(h_l0 * mpp / MPP_MODEL)), Image.Resampling.LANCZOS))
         except Exception as e:
             print(f"WARNING: no tissue mask for {slide_name} ({e}); processing the whole image as tissue")
+            tis_det_map_mpp = np.zeros((int(h_l0 * mpp / MPP_MODEL), int(w_l0 * mpp / MPP_MODEL)))
 
         try:
             map, full_mask = slide_process_single(model, tis_det_map_mpp, slide, patch_n_w_l0, patch_n_h_l0, p_s,

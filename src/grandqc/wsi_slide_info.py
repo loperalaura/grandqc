@@ -4,6 +4,20 @@ from PIL import Image
 from grandqc.wsi_stain_norm import standardizer
 import numpy as np
 
+def is_channels_first(arr):
+    """True if the image is stored as (C, Y, X), False if (Y, X, C).
+
+    OME-TIFF H&E images come in both layouts (see issue #14).
+    """
+    return arr.shape[0] in (3, 4) and arr.shape[-1] not in (3, 4)
+
+
+def image_hw(arr):
+    """Return (height, width) for both (C, Y, X) and (Y, X, C) images."""
+    if is_channels_first(arr):
+        return arr.shape[1], arr.shape[2]
+    return arr.shape[0], arr.shape[1]
+
 
 def slide_info(slide, m_p_s, mpp_model,mpp = 0.2425):
     # Microne per pixel
@@ -12,7 +26,7 @@ def slide_info(slide, m_p_s, mpp_model,mpp = 0.2425):
 
     # Vendor
     # Extract and save dimensions of level [0]
-    _, h_l0, w_l0 = slide.shape
+    h_l0, w_l0 = image_hw(slide)
     #print(slide.shape)
 
     # Calculate number of patches to process
