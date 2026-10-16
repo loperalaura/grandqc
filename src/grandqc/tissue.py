@@ -10,11 +10,13 @@ from skimage.io import imread
 import cv2
 
 # DEVICE
-DEVICE = 'cuda'
-'''
-'cuda' - NVIDIA GPU card
-'mps'    - APPLE Silicon
-'''
+def default_device():
+    """Pick the best available device: CUDA GPU, Apple Silicon (MPS), else CPU."""
+    if torch.cuda.is_available():
+        return 'cuda'
+    if torch.backends.mps.is_available():
+        return 'mps'
+    return 'cpu'
 
 # MODEL(S)
 # MODEL TISSUE DETECTION:
@@ -38,11 +40,15 @@ colors = [[50, 50, 250],    # BLUE: TISSUE
 def main():
 
     parser = argparse.ArgumentParser()
+    parser.add_argument('--device', dest='device', default=None, type=str,
+                        help="'cuda', 'mps' or 'cpu' (default: auto-detect)")    
     parser.add_argument('--slide_folder', dest='slide_folder', help='path to WSIs', type=str)
     parser.add_argument('--output_dir', dest='output_dir', help='path to output folder', type=str)
     parser.add_argument('--mpp', dest='mpp', help='mpp of the slide', default=0.2425, type=float)
     args = parser.parse_args()
 
+    DEVICE = args.device or default_device()
+    print("Using device:", DEVICE)
     SLIDE_DIR = args.slide_folder
     OUTPUT_DIR = args.output_dir
     mpp = args.mpp

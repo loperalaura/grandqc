@@ -20,16 +20,21 @@ import argparse
 Image.MAX_IMAGE_PIXELS = 1000000000
 
 # DEVICE
-DEVICE = 'cuda'
-'''
-'cuda:0' - NVIDIA GPU card
-'mps'    - APPLE Silicon
-'''
+def default_device():
+    """Pick the best available device: CUDA GPU, Apple Silicon (MPS), else CPU."""
+    if torch.cuda.is_available():
+        return 'cuda'
+    if torch.backends.mps.is_available():
+        return 'mps'
+    return 'cpu'
 
 
 def main():
     # Input parameter
+    
     parser = argparse.ArgumentParser()
+    parser.add_argument('--device', dest='device', default=None, type=str,
+                        help="'cuda', 'mps' or 'cpu' (default: auto-detect)")    
     parser.add_argument('--slide_folder', dest='slide_folder', help='path to WSIs', type=str)
     parser.add_argument('--output_dir', dest='output_dir', help='path to output folder', type=str)
     parser.add_argument('--create_geojson', dest='create_geojson', help='create geojson for QC or not', default="Y", type=str)
@@ -42,6 +47,8 @@ def main():
 
     args = parser.parse_args()
 
+    DEVICE = args.device or default_device()
+    print("Using device:", DEVICE)
     MPP_MODEL = args.MPP_MODEL
     start = args.start
     end = args.end
