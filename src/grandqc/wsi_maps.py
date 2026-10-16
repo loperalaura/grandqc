@@ -1,14 +1,16 @@
 import numpy as np
 from PIL import Image
+from grandqc.wsi_slide_info import image_hw, is_channels_first
 import cv2
 
 
 # MAKE OVERLAY: HEATMAP ON REDUCED AND CROPPED SLIDE CLON
 def make_overlay(slide, wsi_heatmap_im, p_s, patch_n_w_l0, patch_n_h_l0, overlay_factor):
-    _, h_l0, w_l0 = slide [0].shape
+    h_l0, w_l0 = image_hw(slide[0])
 
     image_or = np.array(slide[1])
-    image_or = np.transpose(image_or, (1, 2, 0))
+    if is_channels_first(image_or):
+        image_or = np.transpose(image_or, (1, 2, 0))
     slide_reduced = cv2.resize(image_or, (int(w_l0 // overlay_factor), int(h_l0 // overlay_factor)), interpolation=cv2.INTER_CUBIC)
     slide_reduced = Image.fromarray(slide_reduced)
 

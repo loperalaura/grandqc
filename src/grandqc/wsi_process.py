@@ -2,6 +2,7 @@
 import numpy as np
 from PIL import Image
 import segmentation_models_pytorch as smp
+from grandqc.wsi_slide_info import is_channels_first
 import torch
 from tqdm import tqdm
 import cv2
@@ -44,6 +45,7 @@ def slide_process_single(model, tis_det_map_mpp, slide, patch_n_w_l0, patch_n_h_
 
     model_size = (m_p_s, m_p_s)
     preprocessing_fn = smp.encoders.get_preprocessing_fn(ENCODER_MODEL_1, ENCODER_WEIGHTS)
+    channels_first = is_channels_first(slide)    
 
     # Start loop
     for he in tqdm(range(patch_n_h_l0), total=patch_n_h_l0):
@@ -72,8 +74,10 @@ def slide_process_single(model, tis_det_map_mpp, slide, patch_n_w_l0, patch_n_h_
             if np.count_nonzero(td_patch == 0) > 50:    # here change to check of segmentation map
                 # Generate patch
                 # Extract the region from the NumPy array
-                work_patch_np = slide[:, h:h+p_s, w:w+p_s]
-                work_patch_np = np.transpose(work_patch_np, (1, 2, 0))
+                if channels_first:
+                    work_patch_np = np.transpose(slide[:, h:h+p_s, w:w+p_s], (1, 2, 0))
+                else:
+                    work_patch_np = np.asarray(slide[h:h+p_s, w:w+p_s, :])
                 # print(work_patch_np.shape)
 
                 # Create a PIL Image from the NumPy array
