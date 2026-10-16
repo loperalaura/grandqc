@@ -34,7 +34,12 @@ def main():
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', dest='device', default=None, type=str,
-                        help="'cuda', 'mps' or 'cpu' (default: auto-detect)")    
+                        help="'cuda', 'mps' or 'cpu' (default: auto-detect)")  
+    parser.add_argument('--model_path', dest='model_path', default=None, type=str,
+                        help='path to the GrandQC artifact checkpoint (.pth). Must match --mpp_model '
+                             '(GrandQC_MPP1.pth = 1.0, GrandQC_MPP15.pth = 1.5, GrandQC_MPP2.pth = 2.0). '
+                             'Default: ./models/qc/<file for --mpp_model>')     
+    parser.add_argument('--mpp', dest='mpp', help='mpp of the slide', default=0.2425, type=float) 
     parser.add_argument('--slide_folder', dest='slide_folder', help='path to WSIs', type=str)
     parser.add_argument('--output_dir', dest='output_dir', help='path to output folder', type=str)
     parser.add_argument('--create_geojson', dest='create_geojson', help='create geojson for QC or not', default="Y", type=str)
@@ -89,7 +94,9 @@ def main():
     # =============================================================================
     # LOAD MODELS
     # =============================================================================
-    model = torch.load(MODEL_QC_DIR + MODEL_QC_NAME, map_location=DEVICE)
+    model_path = args.model_path or os.path.join(MODEL_QC_DIR, MODEL_QC_NAME)
+    print("Loading artifact model:", model_path)
+    model = torch.load(model_path, map_location=DEVICE)    
 
     # ====================================================================
     # PREPARE REPORT FILE, OUTPUT FOLDERS
@@ -136,7 +143,7 @@ def main():
         slide = slide_original[0]
 
         # GET SLIDE INFO
-        p_s, patch_n_w_l0, patch_n_h_l0, mpp, w_l0, h_l0 = slide_info(slide, M_P_S_MODEL_1, MPP_MODEL)
+        p_s, patch_n_w_l0, patch_n_h_l0, mpp, w_l0, h_l0 = slide_info(slide, M_P_S_MODEL_1, MPP_MODEL, args.mpp)        
 
         # LOAD TISSUE DETECTION MAP
         try:

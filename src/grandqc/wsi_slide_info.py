@@ -5,9 +5,9 @@ from grandqc.wsi_stain_norm import standardizer
 import numpy as np
 
 
-def slide_info(slide, m_p_s, mpp_model):
+def slide_info(slide, m_p_s, mpp_model,mpp = 0.2425):
     # Microne per pixel
-    mpp = 0.2425 #for TCGA-AA- slides of COADREAD cohort
+     # mpp=0.2425 for TCGA-AA- slides of COADREAD cohort
     p_s = int(mpp_model / mpp * m_p_s)
 
     # Vendor
